@@ -1,37 +1,38 @@
-from typing import Optional
-from pydantic import BaseModel
-from pydantic import BaseModel, ConfigDict
+import re
+from pydantic import BaseModel, ConfigDict, EmailStr, validator
 
-class CityModel(BaseModel):
-    id: int
-    name: str
-    
+
 class ReadUserModel(BaseModel):
-    id: int
+    model_config = ConfigDict(from_attributes=True)
     name: str
     surname: str
+    email: EmailStr | None
+    city: str | None
     phone: str
-    city: Optional[CityModel] = None
 
 
-class AuthUserModel(BaseModel):
+class UpdateUserModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    phone: str
-    password: str
-
-
-class CreateUserModel(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    name: str
-    surname: str = None
-    email: str = None
-    phone: str
-    password: str
-
-
-class UserModel(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    id: int
     name: str
     surname: str
-    phone: str
+    email: EmailStr | None
+    #phone: str
+    #password: str
+    
+    @validator('name', 'surname')
+    def check_name(cls, value):
+        if not value or re.search(r'[a-zA-Z]', value):
+            raise ValueError("Field 'name' should not contain English letters")
+        return value
+
+
+class UserModel(ReadUserModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    
+    # @model_validator(mode='after')
+    # def check_email(cls, values):
+    #     email = values.get('email')
+    #     if email and 'example.com' in email:
+    #         raise ValueError("Email must not contain 'example.com'")
+    #     return values

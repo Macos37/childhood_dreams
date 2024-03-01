@@ -36,6 +36,7 @@ MANIFEST
 *.manifest
 *.spec
 
+logs/
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
@@ -60,6 +61,7 @@ cover/
 *.pot
 
 # Django stuff:
+*.log
 local_settings.py
 *db
 

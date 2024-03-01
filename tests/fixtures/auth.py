@@ -2,13 +2,13 @@ import pytest_asyncio
 
 from src.models.user import User
 from src.repositories.auth import AuthService
-from src.schemas.user import CreateUserModel
+from src.schemas.auth import CreateAuthModel
 
 
 @pytest_asyncio.fixture
 async def user(database_session) -> User:
     user_service = AuthService(database_session)
-    data = CreateUserModel(
+    data = CreateAuthModel(
         name='test',
         surname='test',
         email='test',

@@ -5,10 +5,10 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import select, or_
 from src.repositories.abstract_items import AbstractItemService
 from src.models.user import User
-from src.schemas.user import CreateUserModel, UserModel, AuthUserModel
-from src.database import get_async_session
+from src.schemas.auth import AuthUserModel, AuthModel, CreateAuthModel
 import re
-import jwt
+from jose import jwt
+from config import SECRET_KEY,ALGORITHM
 
 
 class AuthService(AbstractItemService):
@@ -16,7 +16,7 @@ class AuthService(AbstractItemService):
     def __init__(self, session) -> None:
         self.session = session
 
-    def get_by_id(self, user_id: int) -> UserModel:
+    def get_by_id(self, user_id: int) -> AuthModel:
         pass
 
     async def get_user_auth(self, data: AuthUserModel):
@@ -31,18 +31,20 @@ class AuthService(AbstractItemService):
                 'phone': db_user.phone,
                 'exp': expiration
             }
-            token = jwt.encode(token, 'secret', algorithm='HS256')
+            token = jwt.encode(token, SECRET_KEY, algorithm=ALGORITHM)
             content = {'token': token}
             response = JSONResponse(content=content)
-            response.set_cookie(key='jwt_token', value=token, httponly=True,
-                                secure=True, samesite='lax')
+            response.set_cookie(key='jwt_token',
+                                value=token,
+                                httponly=True,
+                                samesite='lax')
             return response
 
         else:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="Вы ввели неправильные данные")
 
-    async def create(self, data: CreateUserModel) -> UserModel:
+    async def create(self, data: CreateAuthModel) -> AuthModel:
         self.validate_data(data)
         user = await self.session.execute(
             select(User).where(or_(User.phone == data.phone, 
@@ -69,17 +71,17 @@ class AuthService(AbstractItemService):
         await self.session.refresh(db_user)
         return db_user
 
-    def update(self, data: UserModel) -> UserModel:
+    def update(self, data: AuthModel) -> AuthModel:
         pass
 
     def delete(self, user_id: int) -> None:
         pass
 
-    def get_all(self) -> list[UserModel]:
+    def get_all(self) -> list[AuthModel]:
         pass
 
     @staticmethod
-    def validate_data(data: CreateUserModel) -> bool:
+    def validate_data(data: CreateAuthModel) -> bool:
         if not data.surname and not data.name and not data.phone:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
