@@ -11,18 +11,26 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { FC } from 'react';
 import { useLogin } from '@/features/login';
+import { MuiTelInput } from 'mui-tel-input';
+import { Controller, useForm } from 'react-hook-form';
 
 const LoginPage: FC = () => {
   const { mutate: login } = useLogin();
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      tel: "",
+      password: "",
+    }
+  });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  const onSubmit = (data: {tel: string, password: string}) => {
     login({
-      phone: data.get('phone')?.toString() || '',
-      password: data.get('password')?.toString() || '',
+      phone: data.tel,
+      password: data.password,
+    
     });
   };
+
 
   return (
       <Container component="main" maxWidth="xs">
@@ -40,26 +48,42 @@ const LoginPage: FC = () => {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="phone"
-              label="Phone Number"
-              name="phone"
-              autoComplete="phone"
-              autoFocus
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
+            <Controller
+              name="tel"
+              control={control}
+              render={({ field }) => (
+                <MuiTelInput
+                  {...field}
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="phone"
+                  label="Phone Number"
+                  name="phone"
+                  autoComplete="phone"
+                  autoFocus
+                  onlyCountries={['RU']}
+                  defaultCountry='RU'
+                />
+              )}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
+            <Controller
               name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                />
+              )}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
