@@ -9,10 +9,13 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { FC } from 'react';
+import { FC, useContext, useState } from 'react';
 import { useLogin } from '@/features/login';
 import { MuiTelInput } from 'mui-tel-input';
 import { Controller, useForm } from 'react-hook-form';
+import { Snackbar } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '@/app/providers/auth';
 
 const LoginPage: FC = () => {
   const { mutate: login } = useLogin();
@@ -20,14 +23,24 @@ const LoginPage: FC = () => {
     defaultValues: {
       tel: "",
       password: "",
-    }
+    },
   });
+  const [isError, setIsError] = useState(false);
+  const navigate = useNavigate();
+  const { setToken } = useContext(AuthContext);
 
   const onSubmit = (data: {tel: string, password: string}) => {
     login({
       phone: data.tel,
       password: data.password,
-    
+    }, {
+      onError: () => {
+        setIsError(true);
+      },
+      onSuccess: ({ token }) => {
+        setToken(token);
+        navigate('/');
+      }
     });
   };
 
@@ -65,6 +78,7 @@ const LoginPage: FC = () => {
                   autoFocus
                   onlyCountries={['RU']}
                   defaultCountry='RU'
+                  error={isError}
                 />
               )}
             />
@@ -82,6 +96,7 @@ const LoginPage: FC = () => {
                   type="password"
                   id="password"
                   autoComplete="current-password"
+                  error={isError}
                 />
               )}
             />
@@ -104,13 +119,25 @@ const LoginPage: FC = () => {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/sign-up" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          open={isError}
+          message='Oops, something went wrong! Please try again.'
+          autoHideDuration={3500}
+          onClose={() => setIsError(false)}
+          sx={{
+            '& .MuiSnackbarContent-root': {
+              backgroundColor: '#f44336',
+            },
+          }}
+        />
       </Container>
   );
 }

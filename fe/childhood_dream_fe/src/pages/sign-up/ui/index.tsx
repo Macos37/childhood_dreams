@@ -13,24 +13,35 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { MuiTelInput } from 'mui-tel-input';
 import { Controller, useForm } from 'react-hook-form';
+import { useSignUp } from '@/features/register';
+import { useNavigate } from 'react-router-dom';
 
 interface ISignUpForm {
-  tel: string;
+  phone: string;
   password: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  name: string;
+  surname: string;
 }
 
 const SignUpPage: FC = () => {const { control, handleSubmit } = useForm<ISignUpForm>({
   defaultValues: {
-    tel: "",
+    email: "",
+    name: "",
+    surname: "", 
+    phone: "",
     password: "",
   }
 });
+const { mutate: signUp } = useSignUp();
+const navigate = useNavigate();
 
 const onSubmit = (data: ISignUpForm) => {
-  console.log(data);
+  signUp(data, {
+    onSuccess: () => {
+      navigate('/login');
+    },
+  })
 };
 
   return (
@@ -54,7 +65,7 @@ const onSubmit = (data: ISignUpForm) => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <Controller
-                  name="firstName"
+                  name="name"
                   control={control}
                   render={({ field }) => (
                     <TextField
@@ -71,7 +82,7 @@ const onSubmit = (data: ISignUpForm) => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Controller
-                  name="lastName"
+                  name="surname"
                   control={control}
                   render={({ field }) => (
                     <TextField
@@ -103,7 +114,7 @@ const onSubmit = (data: ISignUpForm) => {
               </Grid>
               <Grid item xs={12}>
                 <Controller
-                  name="tel"
+                  name="phone"
                   control={control}
                   render={({ field }) => (
                     <MuiTelInput
@@ -115,6 +126,7 @@ const onSubmit = (data: ISignUpForm) => {
                       name="phone"
                       autoComplete="tel"
                       onlyCountries={['RU']}
+                      defaultCountry='RU'
                     />
                   )}
                 />
@@ -154,7 +166,7 @@ const onSubmit = (data: ISignUpForm) => {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/login" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>

@@ -12,7 +12,7 @@ interface ILoginResponse {
 
 
 const login = async (params: ILoginParams): Promise<ILoginResponse> => {
-  return apiClient.post('/login', params);
+  return await apiClient.post('/api/v1/auth', params);
 }
 
 export const useLogin = () => {
