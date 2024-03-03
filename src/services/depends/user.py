@@ -9,6 +9,7 @@ from src.repositories.misc.user import get_by_phone
 
 async def get_current_user(request: Request,
                            db: Session = Depends(get_async_session)) -> UserModel:
+    
     token = request.cookies.get("jwt_token")
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -24,5 +25,11 @@ async def get_current_user(request: Request,
         if phone is None:
             raise credentials_exception
         return await get_by_phone(phone=phone, db=db)
-    except Exception:
+    except jwt.ExpiredSignatureError:
         raise credentials_exception
+    except Exception as e:
+        credentials_exception
+        # raise HTTPException(
+        #     status_code=status.HTTP_401_UNAUTHORIZED,
+        #     detail=e.errors()
+        # )

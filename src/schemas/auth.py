@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from pydantic import BaseModel, ConfigDict
 
 
@@ -13,8 +13,8 @@ class CreateAuthModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     name: str
     surname: str
-    email: str = None
     phone: str
+    email: EmailStr | None
     password: str
 
 

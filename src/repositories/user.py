@@ -1,13 +1,14 @@
 from datetime import datetime, timedelta
+import os
 import bcrypt
+import aiofiles
 from pydantic import ValidationError
 from fastapi import File, HTTPException, UploadFile, status
-from fastapi.responses import JSONResponse
 from sqlalchemy import select, or_, update
 from src.repositories.abstract_items import AbstractItemService
 from src.models.user import User
 from src.schemas.user import UserModel, UpdateUserModel, ReadUserModel
-from src.services.depends.user import get_current_user
+from src.services.validate.validate_photo import validate_file_size_type
 
 
 class UserService(AbstractItemService):
@@ -31,7 +32,6 @@ class UserService(AbstractItemService):
                      data: UpdateUserModel, 
                      user: UserModel,
                      ) -> UserModel:
-        #TODO load photo: UploadFile = File(...)
         data = data.model_dump(exclude_none=True)
         try:
             UpdateUserModel.model_validate(data)
@@ -57,3 +57,24 @@ class UserService(AbstractItemService):
 
     def get_all(self) -> list[UserModel]:
         pass
+
+    async def update_photo(self, 
+                           user: UserModel,
+                           photo: UploadFile = File(...)) -> UserModel:
+        validate_file_size_type(photo)
+        path_img = '/static/photo_user/'
+        user_folder_path = f"{os.getcwd()}{path_img}"
+        data = {"photo": path_img + photo.filename}
+        update_query = update(User).filter(User.phone == user.phone).values(
+            data
+        ).returning(
+            User
+        )
+
+        async with aiofiles.open(user_folder_path + photo.filename, "wb")as buffer:
+            buffer.write(await photo.read())
+
+        result = await self.session.execute(update_query)
+        result = result.scalars().first()
+        await self.session.commit()
+        return UserModel.model_validate(result)

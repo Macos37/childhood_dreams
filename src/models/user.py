@@ -25,15 +25,7 @@ class User(Base):
     hash_password = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
-    
-    photo = relationship("UserPhoto", back_populates="users")
+    photo = Column(URLType, nullable=True,
+                   default='/static/photo_user/avatar_default.png')
+
     products = relationship("Product", back_populates="users")
-
-
-class UserPhoto(Base):
-    __tablename__ = "user_photos"
-
-    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    photo_url = Column(URLType, nullable=False)
-    users = relationship("User", back_populates="photo")

@@ -25,7 +25,7 @@ class AuthService(AbstractItemService):
         db_user = db_user.scalars().first()
         if db_user and bcrypt.checkpw(data.password.encode('utf-8'),
                                       db_user.hash_password.encode('utf-8')):
-            expiration = datetime.utcnow() + timedelta(minutes=30)
+            expiration = datetime.utcnow() + timedelta(minutes=60)
             token = {
                 'sub': db_user.id,
                 'phone': db_user.phone,
@@ -80,8 +80,7 @@ class AuthService(AbstractItemService):
     def get_all(self) -> list[AuthModel]:
         pass
 
-    @staticmethod
-    def validate_data(data: CreateAuthModel) -> bool:
+    def validate_data(self, data: CreateAuthModel) -> bool:
         if not data.surname and not data.name and not data.phone:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

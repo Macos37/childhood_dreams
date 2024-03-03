@@ -1,6 +1,5 @@
 from fastapi.routing import APIRouter
 from fastapi import Depends, Response
-from fastapi.security import OAuth2PasswordBearer
 from src.schemas.auth import CreateAuthModel, AuthUserModel, AuthModel
 from src.database import get_async_session
 from sqlalchemy.orm import Session
@@ -15,9 +14,6 @@ async def auth(user: AuthUserModel, db: Session = Depends(get_async_session)):
     user_db = AuthService(db)
     auth_user = await user_db.get_user_auth(user)
     return auth_user
-
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth")
 
 
 @router.post('/register')

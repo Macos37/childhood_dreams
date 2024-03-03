@@ -18,21 +18,21 @@ class UpdateUserModel(BaseModel):
     email: EmailStr | None
     #phone: str
     #password: str
-    
+
     @validator('name', 'surname')
     def check_name(cls, value):
         if not value or re.search(r'[a-zA-Z]', value):
-            raise ValueError("Field 'name' should not contain English letters")
+            raise ValueError("Данное поле не должно содержать латинские буквы")
         return value
+
+    # @validator('phone')
+    # def check_phone(cls, value):
+    #     if not value or re.match(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$', value):
+    #         raise ValueError("Некорректный номер телефона")
+    #     return value
 
 
 class UserModel(ReadUserModel):
-    model_config = ConfigDict(from_attributes=True)
     id: int
-    
-    # @model_validator(mode='after')
-    # def check_email(cls, values):
-    #     email = values.get('email')
-    #     if email and 'example.com' in email:
-    #         raise ValueError("Email must not contain 'example.com'")
-    #     return values
+    photo: str
+
