@@ -37,7 +37,7 @@ class AuthService(AbstractItemService):
             response.set_cookie(key='jwt_token',
                                 value=token,
                                 httponly=True,
-                                samesite='lax')
+                                samesite='none')
             return response
 
         else:
