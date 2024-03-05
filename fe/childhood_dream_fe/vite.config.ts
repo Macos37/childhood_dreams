@@ -8,11 +8,11 @@ export default defineConfig({
   preview: {
     port: 3000,
     strictPort: true,
-   },
-   server: {
+  },
+  server: {
     port: 3000,
     strictPort: true,
     host: true,
-    origin: "http://0.0.0.0:3000",
-   },
+    origin: "http://127.0.0.1:3000",
+  },
 })

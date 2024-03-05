@@ -16,20 +16,20 @@ def create_app() -> FastAPI:
         title='Fast Api project',
         lifespan=lifespan
     )
- 
+
     origins = [
         "http://localhost:3000",
-        "http://127.0.0.1:3000"
-        "http://0.0.0.0:3000"
+        "http://127.0.0.1:3000",
+        "http://0.0.0.0:3000",
+        "http://172.17.0.2:3000",
     ]
 
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
         allow_credentials=True,
-        allow_methods=["GET", "POST", "HEAD", "OPTIONS"],
-        allow_headers=["Access-Control-Allow-Headers", 'Content-Type', 
-                       'Authorization', 'Access-Control-Allow-Origin'],
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
     app.mount("/static", StaticFiles(directory="static"), name="static")
     register_routers(app)

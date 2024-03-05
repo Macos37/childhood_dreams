@@ -1,3 +1,4 @@
+from datetime import datetime
 import re
 from pydantic import BaseModel, ConfigDict, EmailStr, validator
 
@@ -35,4 +36,5 @@ class UpdateUserModel(BaseModel):
 class UserModel(ReadUserModel):
     id: int
     photo: str
+    created_at: datetime
 

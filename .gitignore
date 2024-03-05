@@ -37,6 +37,7 @@ MANIFEST
 *.spec
 
 logs/
+service.log
 *.log
 # Installer logs
 pip-log.txt

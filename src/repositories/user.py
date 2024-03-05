@@ -1,13 +1,11 @@
-from datetime import datetime, timedelta
 import os
-import bcrypt
 import aiofiles
 from pydantic import ValidationError
 from fastapi import File, HTTPException, UploadFile, status
-from sqlalchemy import select, or_, update
+from sqlalchemy import select, update
 from src.repositories.abstract_items import AbstractItemService
 from src.models.user import User
-from src.schemas.user import UserModel, UpdateUserModel, ReadUserModel
+from src.schemas.user import UserModel, UpdateUserModel
 from src.services.validate.validate_photo import validate_file_size_type
 
 
@@ -17,10 +15,11 @@ class UserService(AbstractItemService):
         self.session = session
 
     async def get_by_id(self, user_id: int) -> UserModel:
-        user = self.session.execute(select(User).where(User.id == user_id))
+        user = await self.session.execute(select(User).where(
+            User.id == user_id))
         user = user.scalars().first()
         if user:
-            return user
+            return UserModel.model_validate(user)
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail="Пользователь не найден")
