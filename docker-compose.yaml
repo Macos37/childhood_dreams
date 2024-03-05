@@ -32,6 +32,18 @@ services:
     command: "sh -c 'alembic upgrade head && python3 main.py'"
     networks:
       - app-network
+    
+  frontend:
+    build:
+      context: ./fe/childhood_dream_fe
+      dockerfile: Dockerfile
+    container_name: fe_app
+    ports:
+      - 3000:3000
+    volumes:
+      - ./fe/childhood_dream_fe:/app
+    networks:
+      - app-network
 
 networks:
   app-network:
