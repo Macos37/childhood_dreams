@@ -29,7 +29,9 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
-    command: "sh -c 'alembic upgrade head && python3 main.py'"
+    env_file:
+      - .env
+    command: "sh -c 'alembic upgrade head && python import_data.py && python main.py'"
     networks:
       - app-network
 

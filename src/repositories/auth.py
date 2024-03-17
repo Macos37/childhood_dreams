@@ -8,7 +8,7 @@ from src.models.user import User
 from src.schemas.auth import AuthUserModel, AuthModel, CreateAuthModel
 import re
 from jose import jwt
-from config import SECRET_KEY,ALGORITHM
+from config import SECRET_KEY, ALGORITHM
 
 
 class AuthService(AbstractItemService):

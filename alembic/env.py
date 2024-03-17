@@ -5,8 +5,12 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from src.database import Base
-from src.models.user import *
-
+# from src.models.user import *
+# from src.models.product import *
+# from src.models.country import *
+# from src.models.region import *
+# from src.models.city import *
+from src import models
 from alembic import context
 from config import DB_HOST, DB_PORT, DB_USER, DB_NAME, DB_PASS
 

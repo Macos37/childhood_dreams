@@ -4,13 +4,7 @@ from src.database import Base
 from sqlalchemy_utils.types.url import URLType
 from sqlalchemy.orm import relationship
 from src.models.product import Product
-
-
-class City(Base):
-    __tablename__ = "cities"
-
-    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
-    name = Column(String(100), nullable=False)
+from src.models.city import City
 
 
 class User(Base):
@@ -21,7 +15,8 @@ class User(Base):
     surname = Column(String(100), nullable=False)
     email = Column(String, unique=True)
     phone = Column(String, unique=True, nullable=False)
-    city = Column(Integer, ForeignKey("cities.id", ondelete="CASCADE"))
+    city_id = Column(Integer, ForeignKey("cities.id", ondelete="CASCADE"))
+    address = Column(String(255))
     hash_password = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
@@ -29,3 +24,4 @@ class User(Base):
                    default='/static/photo_user/avatar_default.png')
 
     products = relationship("Product", back_populates="users")
+    cities = relationship("City", back_populates="users")

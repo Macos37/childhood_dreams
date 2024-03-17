@@ -1,22 +1,25 @@
 from datetime import datetime
 import re
 from pydantic import BaseModel, ConfigDict, EmailStr, validator
+from typing import Optional
 
 
 class ReadUserModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     name: str
     surname: str
-    email: EmailStr | None
-    city: str | None
+    city_id: Optional[int] = None
+    email: Optional[EmailStr] = None
+    city: Optional[str] = None
     phone: str
 
 
 class UpdateUserModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    name: str
-    surname: str
-    email: EmailStr | None
+    name: Optional[str] = None
+    surname: Optional[str] = None
+    email: Optional[EmailStr] = None
+    city_id: Optional[int] = None
     #phone: str
     #password: str
 
@@ -37,4 +40,3 @@ class UserModel(ReadUserModel):
     id: int
     photo: str
     created_at: datetime
-
