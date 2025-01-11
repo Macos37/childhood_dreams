@@ -9,13 +9,12 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { FC, useContext, useState } from 'react';
+import { FC, useState } from 'react';
 import { useLogin } from '@/features/login';
 import { MuiTelInput } from 'mui-tel-input';
 import { Controller, useForm } from 'react-hook-form';
 import { Snackbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '@/app/providers/auth';
 
 const LoginPage: FC = () => {
   const { mutate: login } = useLogin();
@@ -27,7 +26,6 @@ const LoginPage: FC = () => {
   });
   const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
-  const { setToken } = useContext(AuthContext);
 
   const onSubmit = (data: {tel: string, password: string}) => {
     login({
@@ -37,8 +35,8 @@ const LoginPage: FC = () => {
       onError: () => {
         setIsError(true);
       },
-      onSuccess: ({ token }) => {
-        setToken(token);
+      onSuccess: () => {
+      
         navigate('/');
       }
     });

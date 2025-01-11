@@ -2,12 +2,17 @@ import { createBrowserRouter } from "react-router-dom";
 import { HomePage } from "@/pages/home";
 import { LoginPage } from "@/pages/login";
 import { SignUpPage } from "@/pages/sign-up";
-import { AuthRoute } from "./providers/auth";
+import { ProfilePage } from "@/pages/profile";
+import { ProtectedRoute } from "./providers/auth";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <AuthRoute><HomePage/></AuthRoute>,
+    element: <ProtectedRoute><HomePage/></ProtectedRoute>,
+  },
+  {
+    path: "/profile",
+    element: <ProtectedRoute><ProfilePage/></ProtectedRoute>,
   },
   {
     path: "/login",
