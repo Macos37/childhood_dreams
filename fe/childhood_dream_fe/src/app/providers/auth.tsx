@@ -1,58 +1,49 @@
-import { FC, createContext, useContext, useEffect, useState } from "react";
+import { FC, createContext, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { apiClient } from "@/shared/api/base";
+import { queryClient } from "@/shared/api/query-client";
+import { useProfile } from "@/entities/profile/api/get_profile";
 
 interface IAuthContext {
-  token: string;
-  setToken: (token: string) => void;
-  removeToken: () => void;
-}
-
-interface IAuthProvider {
-  children: React.ReactNode;
+  isAuthenticated: boolean;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<IAuthContext>({
-  token: '',
-  setToken: () => {},
-  removeToken: () => {},
+  isAuthenticated: false,
+  logout: () => {},
 });
 
-export const AuthProvider: FC<IAuthProvider> = (props) => {
-  const { children } = props;
-  const [token, setToken] = useState<string>('');
-  const removeToken = () => setToken('');
+export const AuthProvider: FC<{children: React.ReactNode}> = ({children}) => {
+  const { data: profile, isError, isLoading } = useProfile();
+  const isAuthenticated = Boolean(profile && !isError);
 
-  return (
-    <AuthContext.Provider value={{ token, setToken, removeToken }}>
-      {children}
-    </AuthContext.Provider>
-  )
-}
+  const logout = async () => {
+    await apiClient.post('/api/v1/logout', {});
+    queryClient.clear();
+  };
 
-interface IAuthRoute {
-  children: React.ReactNode;
-}
-
-export const AuthRoute: FC<IAuthRoute> = (props) => {
-  const { children } = props;
-  const { token } = useContext(AuthContext);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!token) {
-      navigate('/login');
-    }
-  }, [navigate, token]);
-
-  if (!token) {
-    return null;
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
   return (
-    <>
+    <AuthContext.Provider value={{ isAuthenticated, logout }}>
       {children}
-    </>
-  )
-}
+    </AuthContext.Provider>
+  );
+};
+
+export const ProtectedRoute: FC<{children: React.ReactNode}> = ({children}) => {
+  const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('isAuthenticated', isAuthenticated);
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
+
+  return isAuthenticated ? <>{children}</> : null;
+};

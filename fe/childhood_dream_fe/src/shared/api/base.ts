@@ -37,6 +37,7 @@ export class ApiClient {
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
         'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
       },
+      credentials: 'include',
     });
 
     return this.handleResponse<TResult>(response);
@@ -52,6 +53,7 @@ export class ApiClient {
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
         'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
       },
+      credentials: 'include',
       body: JSON.stringify(body),
     });
 
